@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | Breathe & Be</title>
+  <style>
+    /* Your CSS remains exactly the same - no changes needed here */
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: linear-gradient(to right, #ffe680, #cce5ff); display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+    .branding { text-align: center; margin-bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+    .branding h1 { font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 2rem; color: #004085; margin: 0; }
+    .bee-icon { font-size: 2.5rem; }
+    .card { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; }
+    h2 { margin-bottom: 25px; text-align: center; color: #004085; }
+    input { width: 100%; padding: 12px; margin-bottom: 18px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; } /* Added box-sizing */
+    .forgot-link { text-align: right; margin-top: -12px; margin-bottom: 18px; font-size: 13px; }
+    .forgot-link a { color: #004085; text-decoration: none; }
+    .forgot-link a:hover { text-decoration: underline; }
+    button { width: 100%; background-color: #ffcc00; color: #004085; font-weight: bold; padding: 12px; border: none; border-radius: 8px; cursor: pointer; }
+    button:hover { background-color: #e6b800; }
+    .bottom-text { margin-top: 15px; text-align: center; font-size: 14px; }
+    .bottom-text a { color: #004085; text-decoration: none; }
+    .bottom-text a:hover { text-decoration: underline; }
+    #error-message { color: red; text-align: center; margin-top: 10px; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <header class="branding">
+    <span class="bee-icon" aria-label="Bee">🐝</span>
+    <h1>Breathe & Be</h1>
+  </header>
+
+  <div class="card">
+    <h2>Log in to Breathe & Be</h2>
+    <form id="loginForm">
+      <!-- Added IDs for easier selection in JS -->
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <div class="forgot-link">
+        <a href="forgotpassword.html">Forgot password?</a>
+      </div>
+      <button type="submit">Log In</button>
+    </form>
+     <!-- We add this to show potential errors -->
+    <p id="error-message"></p>
+    <div class="bottom-text">
+      <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+    </div>
+  </div>
+
+    <!-- ======================= START: FIREBASE SCRIPT ======================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCaimG4cdtkGHWqYHn9fa5vpbfNGuffgSs",
+      authDomain: "mental-health-app-5754d.firebaseapp.com",
+      projectId: "mental-health-app-5754d",
+      storageBucket: "mental-health-app-5754d.firebasestorage.app",
+      messagingSenderId: "772808891462",
+      appId: "1:772808891462:web:07675a2895d0dd59f93e47"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('error-message');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      errorMessage.textContent = ''; // Clear previous errors
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          console.log('Login successful for:', user.email);
+          // REMOVED: The annoying alert('Login successful!');
+          // Immediately redirect to your main app page
+          window.location.href = 'stageselection.html';
+        })
+        .catch((error) => {
+          console.error(error);
+          errorMessage.textContent = 'Invalid email or password. Please try again.';
+        });
+    });
+  </script>
+  <!-- ======================== END: FIREBASE SCRIPT ======================== -->
+
+</body>
+</html>

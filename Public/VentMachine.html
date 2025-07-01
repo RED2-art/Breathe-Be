@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vent Machine | Breathe & Be</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #ffe680, #cce5ff);
+      color: #003366;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+      visibility: hidden;
+    }
+
+    nav {
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 25px;
+      border-radius: 16px; 
+      margin-bottom: 30px;
+      position: sticky; top: 15px; z-index: 100;
+      width: 100%;
+      max-width: 1100px;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    nav a {
+      text-decoration: none;
+      font-weight: 600;
+      color: #004085;
+      background: rgba(227, 242, 253, 0.8);
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    nav a:hover {
+      background-color: #bbdefb;
+      color: #00264d;
+      transform: translateY(-2px);
+    }
+    nav a[aria-current="page"] {
+      background: #1976d2;
+      color: white;
+      transform: none;
+    }
+    nav a.home-icon {
+      padding: 8px 10px;
+    }
+    .profile-menu { 
+      position: relative;
+    }
+    #profile-menu-button { background-color: #004085; color: white; border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: background-color 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    #profile-menu-button:hover { background-color: #0059b3; }
+    #profile-menu-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 10px); background: white; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); min-width: 220px; z-index: 101; overflow: hidden; }
+    #profile-menu-dropdown.show { display: block; }
+    .profile-header { padding: 15px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6; }
+    .profile-header p { margin: 0; font-weight: 600; color: #343a40; font-size: 0.9rem; word-break: break-all; }
+    .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: #343a40; text-decoration: none; font-weight: 500; transition: background-color 0.2s; font-size: 0.95rem; }
+    .dropdown-item:hover { background-color: #f1f3f5; }
+    .dropdown-divider { height: 1px; background-color: #e9ecef; margin: 5px 0; }
+    
+    h1 {
+      margin-bottom: 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .vent-container {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 15px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 51, 102, 0.2);
+      resize: vertical;
+      box-shadow: 0 2px 8px rgba(0, 51, 102, 0.08);
+      margin-bottom: 15px;
+      font-family: inherit;
+      background-color: rgba(255, 255, 255, 0.75);
+    }
+    textarea:focus {
+        border-color: #42a5f5;
+        outline: none;
+        box-shadow: 0 0 8px rgba(144, 202, 249, 0.5);
+        background-color: white;
+    }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 12px 25px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-family: 'Poppins', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        color: #666;
+    }
+
+    /* === BUTTON COLOR CHANGES START HERE === */
+
+    /* Primary Action: Yellow with Blue Text */
+    #submitVent { 
+      background: #ffcc00; 
+      color: #004085;
+      font-weight: bold;
+    }
+    #submitVent:hover:not(:disabled) { 
+      background: #e6b800; 
+    }
+    
+    /* Secondary Action: Solid Blue */
+    #startRecording { 
+      background: #0059b3; 
+      color: white; 
+    }
+    #startRecording:hover:not(:disabled) { 
+      background: #004085; 
+    }
+    
+    /* Alternative Action: Light Blue */
+    #shredVent { 
+      background: #bbdefb; 
+      color: #004085; 
+    }
+    #shredVent:hover:not(:disabled) { 
+      background: #90caf9; 
+    }
+    
+    /* Warning/Stop Action: Red (Unchanged) */
+    #stopRecording { 
+      background: #c62828; 
+      color: white; 
+      display: none; 
+    } 
+    #stopRecording:hover:not(:disabled) { 
+      background: #b71c1c; 
+    }
+
+    /* Delete Button: Red Theme (Unchanged) */
+    .deleteBtn {
+      background: #fbecec;
+      border: none;
+      border-radius: 6px;
+      color: #c62828;
+      cursor: pointer;
+      font-weight: 600;
+      padding: 6px 10px;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    .deleteBtn:hover {
+      background: #c62828;
+      color: white;
+    }
+    /* === BUTTON COLOR CHANGES END HERE === */
+
+    #recordingStatus {
+      font-weight: 600;
+      margin-top: 10px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #recordingStatus.is-recording::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: #c62828;
+        border-radius: 50%;
+        animation: blink 1.5s infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    #responseMessage {
+      margin-top: 15px;
+      font-size: 1.2rem;
+      color: #00796b;
+      max-width: 600px;
+      text-align: center;
+      min-height: 30px;
+      white-space: pre-wrap;
+    }
+    #savedVents {
+      margin-top: 30px;
+      max-width: 600px;
+      width: 100%;
+    }
+    .ventItem {
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin-bottom: 12px;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      word-break: break-word;
+      font-size: 1.1rem;
+      border-left: 4px solid #42a5f5;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+    .ventContent { flex-grow: 1; margin-right: 15px; }
+    .ventContent .audio-player { width: 100%; }
+    
+    #shredder {
+      margin-top: 25px;
+      width: 600px;
+      max-width: 100%;
+      height: 100px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #bbdefb;
+      box-shadow: 0 0 10px #90caf9;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .robot { width: 80px; height: 80px; position: absolute; left: 20px; top: 10px; animation: munching 1s infinite; transform-origin: center; }
+    @keyframes munching { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(15deg); } }
+    .paper { position: absolute; left: 120px; top: 20px; width: 350px; height: 60px; background: white; border-radius: 5px; box-shadow: 0 0 4px rgba(0,0,0,0.2); animation: shredMove 3s forwards; font-size: 1.1rem; padding: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    @keyframes shredMove { 0% { clip-path: inset(0 0 0 0); transform: translateX(0); opacity: 1; } 50% { clip-path: inset(0 10px 0 10px); transform: translateX(40px); opacity: 0.7; } 100% { clip-path: inset(0 100% 0 100%); transform: translateX(200px) rotate(20deg); opacity: 0; } }
+  </style>
+</head>
+<body>
+
+  <!-- HTML and JS remain unchanged -->
+
+  <nav>
+    <div class="nav-links">
+      <a href="HomePage.html" class="home-icon" aria-label="Home"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/></svg></a>
+      <a href="VentMachine.html" aria-current="page">Vent Machine</a>
+      <a href="procrastination.html">Procrastination</a>
+      <a href="ted-talks.html">TED Talks</a>
+      <a href="leaderboard.html">🏆 Leaderboard</a>
+      <a href="reach-out.html">Reach Out</a>
+      <a href="positive-mindset.html">Positive Mindset</a>
+      <a href="stress-relief.html">Stress Relief</a>
+    </div>
+    <div class="profile-menu">
+      <button id="profile-menu-button" aria-label="Open user menu"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.57 10 8 10c-2.57 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/></svg></button>
+      <div id="profile-menu-dropdown"><div class="profile-header"><p id="user-email-display">Loading...</p></div><a href="settings.html" class="dropdown-item">Settings</a><div class="dropdown-divider"></div><a href="#" class="dropdown-item" id="sign-out-button">Sign Out</a></div>
+    </div>
+  </nav>
+
+  <div class="vent-container">
+    <h1>Vent Machine</h1>
+    <p>Write or record whatever you want to get off your chest. We’re here to listen.</p>
+    <textarea id="ventInput" placeholder="Type your feelings here..."></textarea>
+    <div class="button-group">
+        <button id="startRecording">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"/><path d="M8 8a3 3 0 0 0 3-3V3a3 3 0 0 0-6 0v2a3 3 0 0 0 3 3z"/></svg>
+          Record Vent
+        </button>
+        <button id="stopRecording">
+           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"/></svg>
+           Stop Recording
+        </button>
+        <button id="submitVent">Save Vent</button>
+        <button id="shredVent">Shred Vent</button>
+    </div>
+    <div id="recordingStatus"></div>
+    <div id="responseMessage"></div>
+    <div id="shredder"></div>
+    <div id="savedVents"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut as firebaseSignOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyCaimG4cdtkGHWqYHn9fa5vpbfNGuffgSs",
+      authDomain: "mental-health-app-5754d.firebaseapp.com",
+      projectId: "mental-health-app-5754d",
+      storageBucket: "mental-health-app-5754d.appspot.com",
+      messagingSenderId: "772808891462",
+      appId: "1:772808891462:web:07675a2895d0dd59f93e47"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.body.style.visibility = 'visible';
+        document.getElementById('user-email-display').textContent = user.email;
+        initVentMachine(); 
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+    const profileButton = document.getElementById('profile-menu-button');
+    const profileDropdown = document.getElementById('profile-menu-dropdown');
+    if (profileButton && profileDropdown) {
+        profileButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            profileDropdown.classList.toggle('show');
+        });
+    }
+    window.addEventListener('click', (event) => {
+        if (profileDropdown && profileDropdown.classList.contains('show')) {
+            if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.remove('show');
+            }
+        }
+    });
+    const signOutButton = document.getElementById('sign-out-button');
+    if(signOutButton) {
+        signOutButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            firebaseSignOut(auth).catch((error) => console.error("Sign out error", error));
+        });
+    }
+
+    // --- VENT MACHINE LOGIC WITH AUDIO ---
+    function initVentMachine() {
+      const ventInput = document.getElementById('ventInput');
+      const responseMessage = document.getElementById('responseMessage');
+      const submitVentBtn = document.getElementById('submitVent');
+      const shredVentBtn = document.getElementById('shredVent');
+      const startRecordingBtn = document.getElementById('startRecording');
+      const stopRecordingBtn = document.getElementById('stopRecording');
+      const recordingStatus = document.getElementById('recordingStatus');
+      const savedVentsContainer = document.getElementById('savedVents');
+      const shredder = document.getElementById('shredder');
+
+      let mediaRecorder;
+      let audioChunks = [];
+      let currentAudioBlob = null;
+      let savedVents = JSON.parse(localStorage.getItem('savedVents') || '[]');
+
+      renderSavedVents();
+
+      // --- RECORDING LOGIC ---
+      startRecordingBtn.addEventListener('click', async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                currentAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                audioChunks = [];
+                updateUIState('stopped');
+                stream.getTracks().forEach(track => track.stop()); // Release microphone
+            };
+            
+            mediaRecorder.start();
+            updateUIState('recording');
+
+        } catch (err) {
+            console.error("Error accessing microphone:", err);
+            responseMessage.textContent = "Could not access microphone. Please check permissions.";
+            responseMessage.style.color = "#b00020";
+        }
+      });
+
+      stopRecordingBtn.addEventListener('click', () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+        }
+      });
+
+      // --- SAVING LOGIC (TEXT & AUDIO) ---
+      submitVentBtn.addEventListener('click', () => {
+        const ventText = ventInput.value.trim();
+
+        if (currentAudioBlob) {
+            saveAudioVent();
+        } else if (ventText.length > 0) {
+            saveTextVent(ventText);
+        } else {
+            setResponseMessage("Please write or record something before saving.", true);
+        }
+      });
+      
+      function saveAudioVent() {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64String = reader.result;
+            savedVents.push({ type: 'audio', content: base64String });
+            updateAndRenderVents("Your audio vent has been saved.");
+            currentAudioBlob = null;
+            updateUIState('idle');
+        };
+        reader.readAsDataURL(currentAudioBlob);
+      }
+
+      function saveTextVent(text) {
+          savedVents.push({ type: 'text', content: text });
+          updateAndRenderVents("Your vent has been saved.");
+          ventInput.value = '';
+      }
+
+      // --- SHREDDING LOGIC (TEXT & AUDIO) ---
+      shredVentBtn.addEventListener('click', () => {
+        const ventText = ventInput.value.trim();
+        let shredContent = "";
+        let isShredding = false;
+
+        if (currentAudioBlob) {
+            shredContent = "[Audio Recording]";
+            isShredding = true;
+            currentAudioBlob = null;
+            updateUIState('idle');
+        } else if (ventText.length > 0) {
+            shredContent = ventText;
+            isShredding = true;
+            ventInput.value = '';
+        } else {
+            setResponseMessage("No vent to shred!", true);
+        }
+        
+        if (isShredding) {
+            shredder.style.display = 'flex';
+            shredder.innerHTML = `
+              <svg class="robot" viewBox="0 0 64 64" fill="#003366" xmlns="http://www.w3.org/2000/svg">
+                <rect x="12" y="12" width="40" height="40" rx="8" ry="8"/>
+                <circle cx="24" cy="28" r="4" fill="#90caf9"/><circle cx="40" cy="28" r="4" fill="#90caf9"/>
+                <rect x="20" y="38" width="24" height="6" fill="#90caf9" />
+              </svg>
+              <div class="paper">${shredContent}</div>`;
+            setResponseMessage("Shredding your vent...");
+            setTimeout(() => {
+              shredder.style.display = 'none';
+              setResponseMessage("Your vent has been shredded and destroyed.");
+            }, 3000);
+        }
+      });
+      
+      // --- RENDERING AND UI MANAGEMENT ---
+      function renderSavedVents() {
+        savedVentsContainer.innerHTML = '';
+        if (savedVents.length === 0) {
+          savedVentsContainer.innerHTML = "<p style='color:#555;'>No saved vents yet.</p>";
+          return;
+        }
+        savedVents.forEach((vent, index) => {
+          const ventDiv = document.createElement('div');
+          ventDiv.className = 'ventItem';
+
+          const contentDiv = document.createElement('div');
+          contentDiv.className = 'ventContent';
+
+          if (vent.type === 'audio') {
+              const audioPlayer = document.createElement('audio');
+              audioPlayer.src = vent.content;
+              audioPlayer.controls = true;
+              audioPlayer.className = 'audio-player';
+              contentDiv.appendChild(audioPlayer);
+          } else { // 'text'
+              contentDiv.textContent = vent.content;
+          }
+          
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'deleteBtn';
+          deleteBtn.textContent = 'Delete';
+          deleteBtn.title = "Delete this vent";
+          deleteBtn.addEventListener('click', () => {
+            savedVents.splice(index, 1);
+            updateAndRenderVents("Vent deleted.");
+          });
+
+          ventDiv.appendChild(contentDiv);
+          ventDiv.appendChild(deleteBtn);
+          savedVentsContainer.appendChild(ventDiv);
+        });
+      }
+      
+      function updateAndRenderVents(message) {
+        localStorage.setItem('savedVents', JSON.stringify(savedVents));
+        renderSavedVents();
+        setResponseMessage(message);
+      }
+
+      function setResponseMessage(message, isError = false) {
+          responseMessage.textContent = message;
+          responseMessage.style.color = isError ? "#b00020" : "#00796b";
+      }
+
+      function updateUIState(state) {
+          if (state === 'recording') {
+              startRecordingBtn.style.display = 'none';
+              stopRecordingBtn.style.display = 'inline-flex';
+              submitVentBtn.disabled = true;
+              shredVentBtn.disabled = true;
+              ventInput.disabled = true;
+              recordingStatus.textContent = 'Recording...';
+              recordingStatus.classList.add('is-recording');
+          } else if (state === 'stopped') {
+              startRecordingBtn.style.display = 'none'; // Keep hidden until decision
+              stopRecordingBtn.style.display = 'none';
+              submitVentBtn.disabled = false;
+              shredVentBtn.disabled = false;
+              ventInput.disabled = true; // Still disabled until audio is handled
+              recordingStatus.textContent = 'Recording finished. Save or Shred.';
+              recordingStatus.classList.remove('is-recording');
+          } else { // idle state
+              startRecordingBtn.style.display = 'inline-flex';
+              stopRecordingBtn.style.display = 'none';
+              submitVentBtn.disabled = false;
+              shredVentBtn.disabled = false;
+              ventInput.disabled = false;
+              recordingStatus.textContent = '';
+              recordingStatus.classList.remove('is-recording');
+          }
+      }
+    }
+  </script>
+
+</body>
+</html>
