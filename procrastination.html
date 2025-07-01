@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Procrastination Planner | Breathe & Be</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* === CSS CHANGES START HERE === */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Updated background gradient */
+    background: linear-gradient(to right, #ffe680, #cce5ff);
+    color: #003366;
+    margin: 0; 
+    padding: 20px;
+    min-height: 100vh;
+    visibility: hidden; /* Content hidden until user is verified */
+  }
+  nav {
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 16px; /* Updated for consistency */
+    margin-bottom: 25px;
+    position: sticky; top: 15px; z-index: 100;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    
+    /* Frosted Glass Effect */
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  }
+  nav a {
+    text-decoration: none;
+    font-weight: 600;
+    color: #004085;
+    /* Lighter background for better contrast on glass */
+    background: rgba(227, 242, 253, 0.8); 
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  nav a:hover {
+    background-color: #bbdefb;
+    color: #00264d;
+    transform: translateY(-2px);
+  }
+  nav a[aria-current="page"] {
+    background: #1976d2;
+    color: white;
+    transform: none;
+  }
+  nav a.home-icon {
+    padding: 8px 10px;
+  }
+  .profile-menu { 
+    position: relative;
+  }
+  #profile-menu-button { background-color: #004085; color: white; border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: background-color 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  #profile-menu-button:hover { background-color: #0059b3; }
+  #profile-menu-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 10px); background: white; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); min-width: 220px; z-index: 101; overflow: hidden; }
+  #profile-menu-dropdown.show { display: block; }
+  .profile-header { padding: 15px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6; }
+  .profile-header p { margin: 0; font-weight: 600; color: #343a40; font-size: 0.9rem; word-break: break-all; }
+  .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: #343a40; text-decoration: none; font-weight: 500; transition: background-color 0.2s; font-size: 0.95rem; }
+  .dropdown-item:hover { background-color: #f1f3f5; }
+  .dropdown-divider { height: 1px; background-color: #e9ecef; margin: 5px 0; }
+  
+  header h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+  section {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+    padding: 25px 30px;
+    border-radius: 16px; /* Updated for consistency */
+    
+    /* Frosted Glass Effect */
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(0, 51, 102, 0.1);
+  }
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 12px;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    font-size: 1rem;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1.8px solid rgba(144, 202, 249, 0.8);
+    resize: vertical;
+    box-sizing: border-box;
+    position: relative;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+  input[type="text"]:focus, textarea:focus {
+    background-color: white;
+  }
+  textarea { min-height: 80px; }
+  button, input[type="submit"] {
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+  }
+  button:hover, input[type="submit"]:hover {
+    background: #115293;
+  }
+  .hidden { display: none; }
+  .subject, .task { 
+    margin-top: 15px; 
+    padding: 15px; 
+    border-left: 3px solid #90caf9; 
+    position: relative; 
+    /* Semi-transparent background */
+    background-color: rgba(250, 252, 255, 0.6); 
+    border-radius: 0 8px 8px 0; 
+  }
+  .task { 
+    border-left: 3px solid #64b5f6; 
+    background-color: rgba(247, 249, 253, 0.7); 
+  }
+  .subject-title, .task-title { font-weight: 700; font-size: 1.2rem; margin-bottom: 8px; width: 100%; padding: 8px; }
+  .chunk-item { display: flex; align-items: center; margin-bottom: 8px; position: relative; padding-left: 10px; }
+  .chunk-item input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+  .chunk-item input[type="text"] { flex-grow: 1; font-size: 1rem; border: 1px solid rgba(204, 229, 255, 0.8); border-radius: 6px; padding: 6px 10px; box-sizing: border-box; }
+  .chunk-item.crossed input[type="text"] { text-decoration: line-through; color: gray; background: #f0f0f0; border-color: #e0e0e0; }
+  .add-btn { margin-top: 10px; font-weight: 600; background: #bbdefb; color: #003366; border-radius: 8px; padding: 8px 15px; }
+  .add-btn:hover { background: #90caf9; }
+  .delete-btn { position: absolute; top: 15px; right: 15px; background: #fbecec; border: 1px solid #f8d7da; color: #721c24; width: 24px; height: 24px; font-size: 16px; font-weight: 700; border-radius: 50%; cursor: pointer; line-height: 22px; text-align: center; padding: 0; user-select: none; transition: all 0.3s ease; }
+  .delete-btn:hover { background: #f44336; color: white; border-color: #f44336; }
+  .chunk-item .delete-btn { top: 50%; right: -28px; transform: translateY(-50%); width: 22px; height: 22px; line-height: 20px; }
+  .points-info {
+    /* Semi-transparent background */
+    background-color: rgba(227, 242, 253, 0.7);
+    border: 1px solid #90caf9;
+    color: #0d47a1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+  /* === CSS CHANGES END HERE === */
+</style>
+</head>
+<body>
+
+<!-- HTML and JavaScript are unchanged -->
+<nav>
+  <a href="HomePage.html" class="home-icon" aria-label="Home">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+    </svg>
+  </a>
+  <a href="VentMachine.html">Vent Machine</a>
+  <a href="procrastination.html" aria-current="page">Procrastination</a>
+  <a href="ted-talks.html">TED Talks</a>
+  <a href="leaderboard.html">🏆 Leaderboard</a>
+  <a href="reach-out.html">Reach Out</a>
+  <a href="positive-mindset.html">Positive Mindset</a>
+  <a href="stress-relief.html">Stress Relief</a>
+  
+  <div class="profile-menu">
+    <button id="profile-menu-button" aria-label="Open user menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.57 10 8 10c-2.57 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/></svg>
+    </button>
+    <div id="profile-menu-dropdown">
+      <div class="profile-header">
+        <p id="user-email-display">Loading...</p>
+      </div>
+      <a href="settings.html" class="dropdown-item">Settings</a>
+      <div class="dropdown-divider"></div>
+      <a href="#" class="dropdown-item" id="sign-out-button">Sign Out</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <h1>Procrastination Planner</h1>
+</header>
+<section id="intro-section">
+  <h2>What are you procrastinating on?</h2>
+  <form id="procrastinationForm">
+    <label for="procrastinationItem">Task or Subject you are procrastinating:</label>
+    <input type="text" id="procrastinationItem" name="procrastinationItem" required placeholder="E.g., Maths assignment, History essay" />
+    <label for="consequences">What are the consequences of procrastinating?</label>
+    <textarea id="consequences" name="consequences" required placeholder="E.g., Lower grades, stress, missing deadlines..."></textarea>
+    <input type="submit" value="Let's Plan!" />
+  </form>
+</section>
+<section id="planner-section" class="hidden">
+  <h2>Build Your Action Plan</h2>
+  <p class="points-info">🎉Each chunk you complete earns you 10 points on the leaderboard!</p>
+  <p>Organize your work by subjects, add tasks for each subject, and break tasks into smaller chunks you can check off as you progress.</p>
+  <button id="addSubjectBtn" class="add-btn">+ Add Subject</button>
+  <div id="subjectsContainer"></div>
+</section>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut as firebaseSignOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+  import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCaimG4cdtkGHWqYHn9fa5vpbfNGuffgSs",
+    authDomain: "mental-health-app-5754d.firebaseapp.com",
+    projectId: "mental-health-app-5754d",
+    storageBucket: "mental-health-app-5754d.appspot.com",
+    messagingSenderId: "772808891462",
+    appId: "1:772808891462:web:07675a2895d0dd59f93e47"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let currentUser = null; 
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser = user; 
+      document.body.style.visibility = 'visible';
+      document.getElementById('user-email-display').textContent = user.email;
+      initProcrastinationPlanner();
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+
+  const profileButton = document.getElementById('profile-menu-button');
+  const profileDropdown = document.getElementById('profile-menu-dropdown');
+  if (profileButton && profileDropdown) {
+      profileButton.addEventListener('click', (event) => {
+          event.stopPropagation();
+          profileDropdown.classList.toggle('show');
+      });
+  }
+  window.addEventListener('click', (event) => {
+      if (profileDropdown.classList.contains('show')) {
+          if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+              profileDropdown.classList.remove('show');
+          }
+      }
+  });
+  
+  const signOutButton = document.getElementById('sign-out-button');
+  if(signOutButton) {
+      signOutButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          firebaseSignOut(auth).catch((error) => console.error("Sign out error", error));
+      });
+  }
+
+  function initProcrastinationPlanner() {
+    const procrastinationForm = document.getElementById('procrastinationForm');
+    const introSection = document.getElementById('intro-section');
+    const plannerSection = document.getElementById('planner-section');
+    const subjectsContainer = document.getElementById('subjectsContainer');
+    const addSubjectBtn = document.getElementById('addSubjectBtn');
+
+    procrastinationForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const task = e.target.procrastinationItem.value.trim();
+      if (!task) return;
+      introSection.classList.add('hidden');
+      plannerSection.classList.remove('hidden');
+      addSubject(task);
+      procrastinationForm.reset();
+    });
+
+    addSubjectBtn.addEventListener('click', () => addSubject());
+
+    function addSubject(subjectName = '') {
+      const subjectDiv = document.createElement('div');
+      subjectDiv.className = 'subject';
+      const subjectTitle = document.createElement('input');
+      subjectTitle.type = 'text';
+      subjectTitle.placeholder = 'Subject (e.g., Science)';
+      subjectTitle.className = 'subject-title';
+      subjectTitle.value = subjectName;
+      const deleteSubjectBtn = document.createElement('button');
+      deleteSubjectBtn.className = 'delete-btn';
+      deleteSubjectBtn.title = 'Delete Subject';
+      deleteSubjectBtn.textContent = '×';
+      deleteSubjectBtn.onclick = () => subjectDiv.remove();
+      const tasksContainer = document.createElement('div');
+      const addTaskBtn = document.createElement('button');
+      addTaskBtn.className = 'add-btn';
+      addTaskBtn.textContent = '+ Add Task';
+      addTaskBtn.onclick = () => addTask(tasksContainer);
+      subjectDiv.appendChild(subjectTitle);
+      subjectDiv.appendChild(deleteSubjectBtn);
+      subjectDiv.appendChild(tasksContainer);
+      subjectDiv.appendChild(addTaskBtn);
+      subjectsContainer.appendChild(subjectDiv);
+    }
+
+    function addTask(tasksContainer, taskName = '') {
+      const taskDiv = document.createElement('div');
+      taskDiv.className = 'task';
+      const taskTitle = document.createElement('input');
+      taskTitle.type = 'text';
+      taskTitle.placeholder = 'Task / Topic (e.g., Chapter 5 Review)';
+      taskTitle.className = 'task-title';
+      taskTitle.value = taskName;
+      const deleteTaskBtn = document.createElement('button');
+      deleteTaskBtn.className = 'delete-btn';
+      deleteTaskBtn.title = 'Delete Task';
+      deleteTaskBtn.textContent = '×';
+      deleteTaskBtn.onclick = () => taskDiv.remove();
+      const chunksContainer = document.createElement('div');
+      const addChunkBtn = document.createElement('button');
+      addChunkBtn.className = 'add-btn';
+      addChunkBtn.textContent = '+ Add Chunk';
+      addChunkBtn.onclick = () => addChunk(chunksContainer);
+      taskDiv.appendChild(taskTitle);
+      taskDiv.appendChild(deleteTaskBtn);
+      taskDiv.appendChild(chunksContainer);
+      taskDiv.appendChild(addChunkBtn);
+      tasksContainer.appendChild(taskDiv);
+    }
+
+    function addChunk(chunksContainer, chunkText = '') {
+      const chunkDiv = document.createElement('div');
+      chunkDiv.className = 'chunk-item';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+
+      checkbox.addEventListener('change', async () => {
+        chunkDiv.classList.toggle('crossed', checkbox.checked);
+
+        if (checkbox.checked) {
+          if (currentUser) {
+            const userDocRef = doc(db, "users", currentUser.uid);
+            try {
+              await updateDoc(userDocRef, {
+                points: increment(10)
+              });
+              console.log("SLAY! 10 points awarded for completing a chunk!");
+            } catch (error) {
+              console.error("Error updating points: ", error);
+            }
+          }
+        }
+      });
+
+      const chunkInput = document.createElement('input');
+      chunkInput.type = 'text';
+      chunkInput.placeholder = 'Break it down into a small step...';
+      chunkInput.value = chunkText;
+      const deleteChunkBtn = document.createElement('button');
+      deleteChunkBtn.className = 'delete-btn';
+      deleteChunkBtn.title = 'Delete Chunk';
+      deleteChunkBtn.textContent = '×';
+      deleteChunkBtn.onclick = () => chunkDiv.remove();
+      chunkDiv.appendChild(checkbox);
+      chunkDiv.appendChild(chunkInput);
+      chunkDiv.appendChild(deleteChunkBtn);
+      chunksContainer.appendChild(chunkDiv);
+    }
+  }
+</script>
+
+</body> 
+</html>
